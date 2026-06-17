@@ -229,10 +229,10 @@
 
 <script>
     // ============================================================
-    // ⚙️ CONFIGURACIÓN
+    // ⚙️ CONFIGURACIÓN - DATOS ACTUALIZADOS
     // ============================================================
-    const URL_AGENTE = "https://script.google.com/macros/s/AKfycbyb3nFaLrB7ppVnNLbm7OGZmizkTH8IluL5ug8ruHemnDAB73XoVIcc-YNO-d9kONpQUg/exec";
-    const ID_PLANILLA = "1vR9WF-XWBYICz6EGvw8AtiZ5-B3-XuCDmfKk-hA_5bU";
+    const URL_AGENTE = "https://script.google.com/macros/s/AKfycbxRdk4PnI6GdW3WgJNH0u5ji2XhLe1rSXXuyXU4B-_zcom1Zas5tpKMa6JWMJhqY4Lo8g/exec";
+    const ID_PLANILLA = "1z3iv1BUcrKKCsoE8eo2iF5zz3KZkkuXvQXHNlWg2cSA";
     
     // Proxy para evitar CORS en el celular
     const PROXY_URL = "https://api.allorigins.win/raw?url=";
@@ -275,15 +275,14 @@
             notas: document.getElementById('notas').value
         };
 
-        // Construir URL con los datos como parámetros (para el proxy)
-        const params = new URLSearchParams(data);
-        const urlConDatos = URL_AGENTE + '?' + params.toString();
-        const urlProxy = PROXY_URL + encodeURIComponent(urlConDatos);
-
-        mostrarDebug('Enviando a través de proxy: ' + urlProxy);
+        mostrarDebug('Enviando datos: ' + JSON.stringify(data, null, 2));
 
         try {
             // Intentar primero con el proxy
+            const params = new URLSearchParams(data);
+            const urlConDatos = URL_AGENTE + '?' + params.toString();
+            const urlProxy = PROXY_URL + encodeURIComponent(urlConDatos);
+
             let response = await fetch(urlProxy, {
                 method: 'GET'
             });
@@ -360,12 +359,6 @@
             let response = await fetch(urlProxy);
             let data = await response.json();
             
-            // Si el proxy devuelve HTML, intentar directo
-            if (data.error || data.includes) {
-                response = await fetch(URL_AGENTE);
-                data = await response.json();
-            }
-            
             if (data.totalIngresos !== undefined) {
                 resumenDiv.style.display = 'block';
                 document.getElementById('totalIngresos').textContent = 
@@ -374,6 +367,19 @@
                     data.totalGastos.toLocaleString() + ' ₲';
                 document.getElementById('balance').textContent = 
                     data.balance.toLocaleString() + ' ₲';
+            } else {
+                // Si el proxy falla, intentar directo
+                response = await fetch(URL_AGENTE);
+                data = await response.json();
+                if (data.totalIngresos !== undefined) {
+                    resumenDiv.style.display = 'block';
+                    document.getElementById('totalIngresos').textContent = 
+                        data.totalIngresos.toLocaleString() + ' ₲';
+                    document.getElementById('totalGastos').textContent = 
+                        data.totalGastos.toLocaleString() + ' ₲';
+                    document.getElementById('balance').textContent = 
+                        data.balance.toLocaleString() + ' ₲';
+                }
             }
         } catch (error) {
             console.log('Resumen no disponible:', error);
