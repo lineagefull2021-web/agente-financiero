@@ -5,95 +5,140 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>💰 Agente Financiero</title>
     <style>
-        /* ========== ESTILO MEJORADO ========== */
+        /* ===== RESET Y FUENTES ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
         }
 
+        /* ===== FONDO CON OLAS ===== */
         body {
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 16px;
             background: linear-gradient(145deg, #0b1a33 0%, #1a3a5c 100%);
             background-attachment: fixed;
+            position: relative;
+            overflow: hidden;
         }
 
-        .container {
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(10px);
-            max-width: 480px;
+        /* ===== EFECTO OLAS (mareas) ===== */
+        .wave {
+            position: fixed;
+            bottom: 0;
+            left: 0;
             width: 100%;
-            padding: 32px 28px;
-            border-radius: 32px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            transition: all 0.2s ease;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.15;
         }
 
-        /* ===== ENCABEZADO ===== */
+        .wave svg {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 120%;
+            animation: waveMove 12s ease-in-out infinite alternate;
+        }
+
+        .wave svg:nth-child(2) {
+            animation-delay: -4s;
+            opacity: 0.5;
+        }
+
+        .wave svg:nth-child(3) {
+            animation-delay: -8s;
+            opacity: 0.3;
+        }
+
+        @keyframes waveMove {
+            0% {
+                transform: translateX(0) scaleY(1);
+            }
+            33% {
+                transform: translateX(-5%) scaleY(0.8);
+            }
+            66% {
+                transform: translateX(5%) scaleY(1.2);
+            }
+            100% {
+                transform: translateX(0) scaleY(1);
+            }
+        }
+
+        /* ===== TARJETA (más compacta) ===== */
+        .container {
+            position: relative;
+            z-index: 1;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            max-width: 420px;
+            width: 100%;
+            padding: 20px 18px 18px;
+            border-radius: 28px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        /* ===== ENCABEZADO COMPACTO ===== */
         .header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 8px;
+            margin-bottom: 2px;
         }
 
         h1 {
-            font-size: 26px;
+            font-size: 22px;
             font-weight: 700;
             color: #0b2a4a;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         h1 span {
             background: linear-gradient(145deg, #1a73e8, #0d47a1);
             color: white;
-            font-size: 13px;
+            font-size: 11px;
             font-weight: 600;
-            padding: 4px 14px;
+            padding: 2px 12px;
             border-radius: 30px;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
             box-shadow: 0 2px 8px rgba(26, 115, 232, 0.3);
         }
 
         .subtitle {
             color: #4a6a8a;
-            font-size: 15px;
-            margin-top: -4px;
-            margin-bottom: 20px;
+            font-size: 13px;
+            margin-top: -2px;
+            margin-bottom: 12px;
             font-weight: 400;
-            border-left: 4px solid #1a73e8;
-            padding-left: 12px;
+            border-left: 3px solid #1a73e8;
+            padding-left: 10px;
         }
 
-        /* ===== ETIQUETAS ===== */
+        /* ===== CAMPOS MÁS COMPACTOS ===== */
         label {
             font-weight: 600;
             display: block;
-            margin: 18px 0 6px;
-            font-size: 14px;
+            margin: 10px 0 4px;
+            font-size: 13px;
             color: #1a3a5c;
-            letter-spacing: 0.3px;
+            letter-spacing: 0.2px;
         }
 
-        label .emoji {
-            margin-right: 6px;
-        }
-
-        /* ===== CAMPOS ===== */
         input, select {
             width: 100%;
-            padding: 13px 16px;
+            padding: 10px 14px;
             border: 2px solid #e2e8f0;
-            border-radius: 14px;
-            font-size: 16px;
+            border-radius: 12px;
+            font-size: 15px;
             background: #f8fafc;
             transition: all 0.2s ease;
             color: #0b1a33;
@@ -104,39 +149,38 @@
             border-color: #1a73e8;
             outline: none;
             background: white;
-            box-shadow: 0 0 0 4px rgba(26, 115, 232, 0.15);
-            transform: scale(1.01);
+            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.12);
         }
 
         input::placeholder {
             color: #94a3b8;
             font-weight: 400;
+            font-size: 14px;
         }
 
-        /* ===== BOTÓN PRINCIPAL ===== */
+        /* ===== BOTÓN COMPACTO ===== */
         button {
             width: 100%;
-            padding: 16px;
-            margin-top: 28px;
+            padding: 13px;
+            margin-top: 18px;
             background: linear-gradient(145deg, #0d9488, #0d6b3e);
             color: white;
             border: none;
-            border-radius: 16px;
-            font-size: 19px;
+            border-radius: 14px;
+            font-size: 17px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s ease;
-            box-shadow: 0 8px 24px rgba(13, 107, 62, 0.35);
-            letter-spacing: 0.5px;
+            box-shadow: 0 6px 20px rgba(13, 107, 62, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 12px 32px rgba(13, 107, 62, 0.45);
+            box-shadow: 0 10px 28px rgba(13, 107, 62, 0.4);
         }
 
         button:active {
@@ -145,12 +189,12 @@
 
         /* ===== MENSAJES ===== */
         .msg {
-            margin-top: 16px;
-            padding: 14px 16px;
-            border-radius: 14px;
+            margin-top: 12px;
+            padding: 10px 14px;
+            border-radius: 12px;
             display: none;
             font-weight: 600;
-            font-size: 15px;
+            font-size: 14px;
             text-align: center;
         }
 
@@ -158,43 +202,40 @@
             background: #dcfce7;
             color: #0d6b3e;
             display: block;
-            border-left: 6px solid #0d6b3e;
+            border-left: 5px solid #0d6b3e;
         }
 
         .msg.error {
             background: #fee2e2;
             color: #991b1b;
             display: block;
-            border-left: 6px solid #991b1b;
+            border-left: 5px solid #991b1b;
         }
 
-        /* ===== RESÚMEN ===== */
+        /* ===== RESUMEN COMPACTO ===== */
         .resumen {
-            margin-top: 28px;
+            margin-top: 16px;
             background: #f1f5f9;
-            border-radius: 20px;
-            padding: 20px 18px;
+            border-radius: 16px;
+            padding: 14px 14px 10px;
             display: none;
             border: 1px solid #e2e8f0;
         }
 
         .resumen h3 {
-            font-size: 17px;
+            font-size: 15px;
             color: #0b2a4a;
-            margin-bottom: 14px;
+            margin-bottom: 8px;
             font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
         .resumen-item {
             display: flex;
             justify-content: space-between;
-            padding: 10px 0;
+            padding: 6px 0;
             border-bottom: 1px solid #e2e8f0;
             font-weight: 500;
-            font-size: 15px;
+            font-size: 14px;
         }
 
         .resumen-item:last-child {
@@ -203,40 +244,37 @@
 
         .resumen .valor {
             font-weight: 700;
-            font-size: 16px;
+            font-size: 15px;
         }
 
-        .resumen .ingreso { 
-            color: #0d6b3e; 
+        .resumen .ingreso {
+            color: #0d6b3e;
             background: #dcfce7;
-            padding: 2px 12px;
+            padding: 0 12px;
             border-radius: 20px;
         }
-
-        .resumen .gasto { 
-            color: #991b1b; 
+        .resumen .gasto {
+            color: #991b1b;
             background: #fee2e2;
-            padding: 2px 12px;
+            padding: 0 12px;
             border-radius: 20px;
         }
-
-        .resumen .balance { 
-            color: #0b2a4a; 
+        .resumen .balance {
+            color: #0b2a4a;
             background: #e2e8f0;
-            padding: 2px 12px;
+            padding: 0 12px;
             border-radius: 20px;
-            font-weight: 700;
         }
 
-        /* ===== PIE DE PÁGINA ===== */
+        /* ===== PIE DE PÁGINA COMPACTO ===== */
         .footer {
-            margin-top: 24px;
+            margin-top: 14px;
             text-align: center;
-            font-size: 14px;
+            font-size: 13px;
             color: #64748b;
             display: flex;
             justify-content: center;
-            gap: 16px;
+            gap: 12px;
             flex-wrap: wrap;
         }
 
@@ -244,11 +282,12 @@
             color: #1a73e8;
             text-decoration: none;
             font-weight: 600;
-            padding: 4px 10px;
+            padding: 4px 12px;
             border-radius: 30px;
             transition: all 0.2s ease;
             cursor: pointer;
             background: #eef2ff;
+            font-size: 13px;
         }
 
         .footer a:hover {
@@ -261,53 +300,78 @@
         .loading {
             display: none;
             text-align: center;
-            margin-top: 14px;
+            margin-top: 10px;
             color: #1a73e8;
             font-weight: 600;
-            font-size: 15px;
+            font-size: 14px;
         }
 
         /* ===== DEBUG ===== */
         .debug {
-            margin-top: 14px;
-            padding: 12px 14px;
+            margin-top: 10px;
+            padding: 10px 12px;
             background: #0b1a33;
             color: #b0c4de;
-            border-radius: 14px;
-            font-size: 12px;
+            border-radius: 12px;
+            font-size: 11px;
             font-family: 'Courier New', monospace;
             display: none;
             word-break: break-all;
             border: 1px solid #2a4a6a;
-            max-height: 200px;
+            max-height: 150px;
             overflow-y: auto;
         }
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 480px) {
             .container {
-                padding: 24px 18px;
-                border-radius: 24px;
+                padding: 16px 14px 14px;
+                border-radius: 22px;
             }
             h1 {
-                font-size: 22px;
+                font-size: 20px;
             }
             button {
-                font-size: 17px;
-                padding: 14px;
+                font-size: 16px;
+                padding: 12px;
+            }
+            input, select {
+                padding: 9px 12px;
+                font-size: 14px;
+            }
+            label {
+                font-size: 12px;
+                margin: 8px 0 3px;
+            }
+            .resumen-item {
+                font-size: 13px;
+                padding: 5px 0;
             }
         }
     </style>
 </head>
 <body>
+
+<!-- ===== EFECTO DE OLAS (MAREAS) ===== -->
+<div class="wave">
+    <svg viewBox="0 0 1200 200" preserveAspectRatio="none">
+        <path d="M0,100 C300,0 600,200 900,50 C1000,20 1100,80 1200,100 L1200,200 L0,200 Z" fill="#1a73e8"/>
+    </svg>
+    <svg viewBox="0 0 1200 200" preserveAspectRatio="none">
+        <path d="M0,100 C200,150 500,20 800,120 C950,170 1050,100 1200,120 L1200,200 L0,200 Z" fill="#0d47a1"/>
+    </svg>
+    <svg viewBox="0 0 1200 200" preserveAspectRatio="none">
+        <path d="M0,80 C400,160 700,20 1000,100 C1100,130 1150,90 1200,90 L1200,200 L0,200 Z" fill="#1a3a5c"/>
+    </svg>
+</div>
+
+<!-- ===== TARJETA ===== -->
 <div class="container">
-    <!-- ENCABEZADO -->
     <div class="header">
         <h1>💰 Agente <span>v1.0</span></h1>
     </div>
     <p class="subtitle">📋 Registra tus ingresos y gastos</p>
 
-    <!-- FORMULARIO -->
     <form id="formRegistro">
         <label>📅 Fecha</label>
         <input type="date" id="fecha" required>
@@ -330,7 +394,7 @@
             <option value="Otros">📦 Otros</option>
         </select>
 
-        <label>📝 Descripción (opcional)</label>
+        <label>📝 Descripción</label>
         <input type="text" id="descripcion" placeholder="Ej: Compra del supermercado">
 
         <label>💵 Monto</label>
@@ -343,22 +407,16 @@
             <option value="EUR">€ Euros</option>
         </select>
 
-        <label>📎 Notas (opcional)</label>
+        <label>📎 Notas</label>
         <input type="text" id="notas" placeholder="Información adicional">
 
         <button type="submit">💾 Guardar registro</button>
     </form>
 
-    <!-- LOADING -->
     <div id="loading" class="loading">⏳ Guardando...</div>
-
-    <!-- MENSAJES -->
     <div id="mensaje" class="msg"></div>
-
-    <!-- DEBUG -->
     <div id="debugInfo" class="debug"></div>
 
-    <!-- RESUMEN -->
     <div id="resumen" class="resumen">
         <h3>📊 Resumen rápido</h3>
         <div class="resumen-item">
@@ -375,7 +433,6 @@
         </div>
     </div>
 
-    <!-- PIE DE PÁGINA -->
     <div class="footer">
         <a id="btnDescargar">📥 Descargar Excel</a>
         <a id="btnActualizar">🔄 Actualizar resumen</a>
@@ -384,14 +441,14 @@
 
 <script>
     // ============================================================
-    // ⚙️ CONFIGURACIÓN
+    // ⚙️ CONFIGURACIÓN - TUS DATOS
     // ============================================================
     const URL_AGENTE = "https://script.google.com/macros/s/AKfycbxRdk4PnI6GdW3WgJNH0u5ji2XhLe1rSXXuyXU4B-_zcom1Zas5tpKMa6JWMJhqY4Lo8g/exec";
     const ID_PLANILLA = "1z3iv1BUcrKKCsoE8eo2iF5zz3KZkkuXvQXHNlWg2cSA";
     const PROXY_URL = "https://corsproxy.io/?";
 
     // ============================================================
-    // CÓDIGO DEL AGENTE (igual que antes)
+    // CÓDIGO DEL AGENTE
     // ============================================================
     const form = document.getElementById('formRegistro');
     const mensaje = document.getElementById('mensaje');
@@ -435,53 +492,46 @@
             const urlProxy = PROXY_URL + encodeURIComponent(urlConDatos);
 
             const response = await fetch(urlProxy, { method: 'GET' });
-            const result = await response.text();
-            mostrarDebug('Respuesta del servidor: ' + result);
+            let result = await response.text();
+            mostrarDebug('Respuesta PROXY: ' + result);
 
+            let json = null;
             try {
-                const json = JSON.parse(result);
-                if (json.status === 'success') {
-                    mostrarMensaje('✅ ¡Registro guardado con éxito!', 'success');
-                    document.getElementById('descripcion').value = '';
-                    document.getElementById('monto').value = '';
-                    document.getElementById('notas').value = '';
-                    cargarResumen();
-                } else {
-                    mostrarMensaje('❌ Error: ' + json.message, 'error');
-                }
-            } catch (parseError) {
-                mostrarMensaje('❌ Error al interpretar la respuesta: ' + result.substring(0, 100), 'error');
-            }
-
-        } catch (error) {
-            try {
-                mostrarDebug('Proxy falló, intentando POST directo...');
-                const response = await fetch(URL_AGENTE, {
+                json = JSON.parse(result);
+            } catch (e) {
+                mostrarDebug('No es JSON. Intentando POST directo...');
+                const response2 = await fetch(URL_AGENTE, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
-                const result = await response.text();
-                mostrarDebug('Respuesta directa: ' + result);
-
+                const result2 = await response2.text();
+                mostrarDebug('Respuesta POST directo: ' + result2);
                 try {
-                    const json = JSON.parse(result);
-                    if (json.status === 'success') {
-                        mostrarMensaje('✅ ¡Registro guardado con éxito!', 'success');
-                        document.getElementById('descripcion').value = '';
-                        document.getElementById('monto').value = '';
-                        document.getElementById('notas').value = '';
-                        cargarResumen();
-                    } else {
-                        mostrarMensaje('❌ Error: ' + json.message, 'error');
-                    }
-                } catch (parseError) {
-                    mostrarMensaje('❌ Error al interpretar la respuesta: ' + result.substring(0, 100), 'error');
+                    json = JSON.parse(result2);
+                } catch (e2) {
+                    mostrarMensaje('❌ No se pudo conectar con el servidor.', 'error');
+                    loading.style.display = 'none';
+                    return;
                 }
-            } catch (error2) {
-                mostrarMensaje('❌ Error de conexión: ' + error2.message, 'error');
-                mostrarDebug('Error detallado: ' + error2.toString());
             }
+
+            if (json && json.status === 'success') {
+                mostrarMensaje('✅ ¡Registro guardado con éxito!', 'success');
+                document.getElementById('descripcion').value = '';
+                document.getElementById('monto').value = '';
+                document.getElementById('notas').value = '';
+                cargarResumen();
+            } else if (json && json.status === 'error') {
+                mostrarMensaje('❌ Error: ' + (json.message || 'Error desconocido'), 'error');
+            } else {
+                mostrarMensaje('⚠️ Respuesta inesperada. Revisa el debug.', 'error');
+                mostrarDebug('Respuesta: ' + JSON.stringify(json, null, 2));
+            }
+
+        } catch (error) {
+            mostrarMensaje('❌ Error de conexión: ' + error.message, 'error');
+            mostrarDebug('Error: ' + error.toString());
         }
 
         loading.style.display = 'none';
@@ -492,7 +542,6 @@
             const urlProxy = PROXY_URL + encodeURIComponent(URL_AGENTE);
             const response = await fetch(urlProxy);
             const data = await response.json();
-
             if (data.totalIngresos !== undefined) {
                 resumenDiv.style.display = 'block';
                 document.getElementById('totalIngresos').textContent = data.totalIngresos.toLocaleString() + ' ₲';
