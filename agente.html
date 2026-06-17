@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💰 Agente Financiero</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+        }
+        body {
+            background: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 16px;
+        }
+        .container {
+            background: white;
+            max-width: 480px;
+            width: 100%;
+            padding: 24px;
+            border-radius: 24px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        }
+        h1 {
+            font-size: 24px;
+            margin-top: 0;
+            color: #1a2a3a;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .badge {
+            background: #e8f0fe;
+            color: #1a73e8;
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        label {
+            font-weight: 600;
+            display: block;
+            margin: 16px 0 6px;
+            font-size: 14px;
+            color: #1a2a3a;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #d0d9e0;
+            border-radius: 12px;
+            font-size: 16px;
+            background: #fafbfc;
+            transition: 0.2s;
+        }
+        input:focus, select:focus {
+            border-color: #1a73e8;
+            outline: none;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(26,115,232,0.2);
+        }
+        .row {
+            display: flex;
+            gap: 12px;
+        }
+        .row > * {
+            flex: 1;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 24px;
+            transition: 0.2s;
+        }
+        button:hover {
+            background: #1557b0;
+            transform: scale(1.01);
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+        .msg {
+            margin-top: 16px;
+            padding: 12px;
+            border-radius: 12px;
+            display: none;
+            font-weight: 500;
+        }
+        .msg.success {
+            background: #e6f9ed;
+            color: #0d6b3e;
+            display: block;
+        }
+        .msg.error {
+            background: #fde8e8;
+            color: #b91c1c;
+            display: block;
+        }
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 13px;
+            color: #6b7a8a;
+        }
+        .footer a {
+            color: #1a73e8;
+            text-decoration: none;
+        }
+        .resumen {
+            margin-top: 24px;
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 16px;
+            display: none;
+        }
+        .resumen h3 {
+            margin: 0 0 12px;
+            font-size: 16px;
+            color: #1a2a3a;
+        }
+        .resumen-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e9edf2;
+        }
+        .resumen-item:last-child {
+            border-bottom: none;
+        }
+        .resumen .valor {
+            font-weight: 700;
+        }
+        .resumen .ingreso { color: #0d6b3e; }
+        .resumen .gasto { color: #b91c1c; }
+        .resumen .balance { color: #1a2a3a; }
+        @media (max-width: 480px) {
+            .row { flex-direction: column; gap: 0; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>💰 Agente <span class="badge">v1.0</span></h1>
+    <p style="color:#6b7a8a;margin-top:-8px;">Registra tus ingresos y gastos</p>
+
+    <form id="formRegistro">
+        <!-- Fecha -->
+        <label>📅 Fecha</label>
+        <input type="date" id="fecha" required>
+
+        <!-- Tipo -->
+        <label>📌 Tipo</label>
+        <select id="tipo" required>
+            <option value="Ingreso">✅ Ingreso</option>
+            <option value="Gasto">❌ Gasto</option>
+        </select>
+
+        <!-- Categoría -->
+        <label>📂 Categoría</label>
+        <select id="categoria" required>
+            <option value="Comida">Comida</option>
+            <option value="Transporte">Transporte</option>
+            <option value="Vivienda">Vivienda</option>
+            <option value="Salud">Salud</option>
+            <option value="Educación">Educación</option>
+            <option value="Entretenimiento">Entretenimiento</option>
+            <option value="Sueldo">Sueldo</option>
+            <option value="Otros">Otros</option>
+        </select>
+
+        <!-- Descripción -->
+        <label>📝 Descripción (opcional)</label>
+        <input type="text" id="descripcion" placeholder="Ej: Compra del supermercado">
+
+        <!-- Monto -->
+        <label>💵 Monto</label>
+        <input type="number" id="monto" step="0.01" placeholder="0" required>
+
+        <!-- Moneda -->
+        <label>🪙 Moneda</label>
+        <select id="moneda">
+            <option value="GS">₲ Guaraníes</option>
+            <option value="USD">$ Dólares</option>
+            <option value="EUR">€ Euros</option>
+        </select>
+
+        <!-- Notas -->
+        <label>📎 Notas (opcional)</label>
+        <input type="text" id="notas" placeholder="Información adicional">
+
+        <button type="submit">💾 Guardar registro</button>
+    </form>
+
+    <div id="mensaje" class="msg"></div>
+
+    <div id="resumen" class="resumen">
+        <h3>📊 Resumen rápido</h3>
+        <div class="resumen-item"><span>💚 Ingresos</span><span class="valor ingreso" id="totalIngresos">0</span></div>
+        <div class="resumen-item"><span>❤️ Gastos</span><span class="valor gasto" id="totalGastos">0</span></div>
+        <div class="resumen-item"><span>⚖️ Balance</span><span class="valor balance" id="balance">0</span></div>
+    </div>
+
+    <div class="footer">
+        <a href="#" id="btnDescargar">📥 Descargar Excel</a> · 
+        <a href="#" id="btnActualizar">🔄 Actualizar resumen</a>
+    </div>
+</div>
+
+<script>
+    // ⚙️ CONFIGURACIÓN - CAMBIA ESTA URL POR LA TUYA
+    const URL_AGENTE = https://script.google.com/macros/s/AKfycbyovfSjTjKJMuX8awSNTxU1rBIp4Tld6SgyAXKWnotehiAYPhOb_wcnBsqYtkzhQ5IFWA/exec
+    // Elementos
+    const form = document.getElementById('formRegistro');
+    const mensaje = document.getElementById('mensaje');
+    const resumenDiv = document.getElementById('resumen');
+
+    // ========== GUARDAR REGISTRO ==========
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        mensaje.className = 'msg';
+        mensaje.style.display = 'none';
+
+        const data = {
+            fecha: document.getElementById('fecha').value,
+            tipo: document.getElementById('tipo').value,
+            categoria: document.getElementById('categoria').value,
+            descripcion: document.getElementById('descripcion').value,
+            monto: document.getElementById('monto').value,
+            moneda: document.getElementById('moneda').value,
+            notas: document.getElementById('notas').value
+        };
+
+        try {
+            const response = await fetch(URL_AGENTE, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            mensaje.className = 'msg success';
+            mensaje.style.display = 'block';
+            mensaje.textContent = '✅ ¡Registro guardado con éxito!';
+            
+            // Limpiar algunos campos
+            document.getElementById('descripcion').value = '';
+            document.getElementById('monto').value = '';
+            document.getElementById('notas').value = '';
+            
+            // Actualizar resumen
+            cargarResumen();
+
+        } catch (error) {
+            mensaje.className = 'msg error';
+            mensaje.style.display = 'block';
+            mensaje.textContent = '❌ Error al guardar: ' + error.message;
+        }
+    });
+
+    // ========== CARGAR RESUMEN ==========
+    async function cargarResumen() {
+        try {
+            const response = await fetch(URL_AGENTE);
+            const data = await response.json();
+            
+            if (data.totalIngresos !== undefined) {
+                resumenDiv.style.display = 'block';
+                document.getElementById('totalIngresos').textContent = 
+                    data.totalIngresos.toLocaleString() + ' ₲';
+                document.getElementById('totalGastos').textContent = 
+                    data.totalGastos.toLocaleString() + ' ₲';
+                document.getElementById('balance').textContent = 
+                    data.balance.toLocaleString() + ' ₲';
+            }
+        } catch (error) {
+            console.log('Resumen no disponible:', error);
+        }
+    }
+
+    // ========== DESCARGAR EXCEL ==========
+    document.getElementById('btnDescargar').addEventListener('click', (e) => {
+        e.preventDefault();
+        // Abre la planilla de Google Sheets en una nueva pestaña
+        const sheetUrl = URL_AGENTE.replace('/exec', '/edit');
+        window.open(sheetUrl, '_blank');
+    });
+
+    // ========== ACTUALIZAR RESUMEN ==========
+    document.getElementById('btnActualizar').addEventListener('click', (e) => {
+        e.preventDefault();
+        cargarResumen();
+    });
+
+    // ========== INICIALIZAR FECHA ==========
+    document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
+
+    // Cargar resumen al abrir
+    cargarResumen();
+</script>
+</body>
+</html>
