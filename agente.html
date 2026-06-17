@@ -5,161 +5,309 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>💰 Agente Financiero</title>
     <style>
+        /* ========== ESTILO MEJORADO ========== */
         * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, sans-serif;
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
         }
+
         body {
-            background: #f0f4f8;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 16px;
+            padding: 20px;
+            background: linear-gradient(145deg, #0b1a33 0%, #1a3a5c 100%);
+            background-attachment: fixed;
         }
+
         .container {
-            background: white;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
             max-width: 480px;
             width: 100%;
-            padding: 24px;
-            border-radius: 24px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            padding: 32px 28px;
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.2s ease;
         }
+
+        /* ===== ENCABEZADO ===== */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
         h1 {
-            font-size: 24px;
-            margin-top: 0;
-            color: #1a2a3a;
+            font-size: 26px;
+            font-weight: 700;
+            color: #0b2a4a;
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        .badge {
-            background: #e8f0fe;
-            color: #1a73e8;
-            font-size: 12px;
-            padding: 4px 12px;
-            border-radius: 20px;
+
+        h1 span {
+            background: linear-gradient(145deg, #1a73e8, #0d47a1);
+            color: white;
+            font-size: 13px;
             font-weight: 600;
+            padding: 4px 14px;
+            border-radius: 30px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(26, 115, 232, 0.3);
         }
+
+        .subtitle {
+            color: #4a6a8a;
+            font-size: 15px;
+            margin-top: -4px;
+            margin-bottom: 20px;
+            font-weight: 400;
+            border-left: 4px solid #1a73e8;
+            padding-left: 12px;
+        }
+
+        /* ===== ETIQUETAS ===== */
         label {
             font-weight: 600;
             display: block;
-            margin: 16px 0 6px;
+            margin: 18px 0 6px;
             font-size: 14px;
-            color: #1a2a3a;
+            color: #1a3a5c;
+            letter-spacing: 0.3px;
         }
+
+        label .emoji {
+            margin-right: 6px;
+        }
+
+        /* ===== CAMPOS ===== */
         input, select {
             width: 100%;
-            padding: 12px 14px;
-            border: 1px solid #d0d9e0;
-            border-radius: 12px;
+            padding: 13px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
             font-size: 16px;
-            background: #fafbfc;
+            background: #f8fafc;
+            transition: all 0.2s ease;
+            color: #0b1a33;
+            font-weight: 500;
         }
+
         input:focus, select:focus {
             border-color: #1a73e8;
             outline: none;
             background: white;
-            box-shadow: 0 0 0 3px rgba(26,115,232,0.2);
+            box-shadow: 0 0 0 4px rgba(26, 115, 232, 0.15);
+            transform: scale(1.01);
         }
+
+        input::placeholder {
+            color: #94a3b8;
+            font-weight: 400;
+        }
+
+        /* ===== BOTÓN PRINCIPAL ===== */
         button {
             width: 100%;
-            padding: 14px;
-            background: #1a73e8;
+            padding: 16px;
+            margin-top: 28px;
+            background: linear-gradient(145deg, #0d9488, #0d6b3e);
             color: white;
             border: none;
-            border-radius: 12px;
-            font-size: 18px;
+            border-radius: 16px;
+            font-size: 19px;
             font-weight: 700;
             cursor: pointer;
-            margin-top: 24px;
+            transition: all 0.2s ease;
+            box-shadow: 0 8px 24px rgba(13, 107, 62, 0.35);
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
+
         button:hover {
-            background: #1557b0;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(13, 107, 62, 0.45);
         }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        /* ===== MENSAJES ===== */
         .msg {
             margin-top: 16px;
-            padding: 12px;
-            border-radius: 12px;
+            padding: 14px 16px;
+            border-radius: 14px;
             display: none;
-            font-weight: 500;
+            font-weight: 600;
+            font-size: 15px;
+            text-align: center;
         }
+
         .msg.success {
-            background: #e6f9ed;
+            background: #dcfce7;
             color: #0d6b3e;
             display: block;
+            border-left: 6px solid #0d6b3e;
         }
+
         .msg.error {
-            background: #fde8e8;
-            color: #b91c1c;
+            background: #fee2e2;
+            color: #991b1b;
             display: block;
+            border-left: 6px solid #991b1b;
         }
-        .footer {
-            margin-top: 20px;
-            text-align: center;
-            font-size: 13px;
-            color: #6b7a8a;
-        }
-        .footer a {
-            color: #1a73e8;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .footer a:hover {
-            text-decoration: underline;
-        }
+
+        /* ===== RESÚMEN ===== */
         .resumen {
-            margin-top: 24px;
-            background: #f8fafc;
-            border-radius: 16px;
-            padding: 16px;
+            margin-top: 28px;
+            background: #f1f5f9;
+            border-radius: 20px;
+            padding: 20px 18px;
             display: none;
+            border: 1px solid #e2e8f0;
         }
+
         .resumen h3 {
-            margin: 0 0 12px;
-            font-size: 16px;
-            color: #1a2a3a;
+            font-size: 17px;
+            color: #0b2a4a;
+            margin-bottom: 14px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
+
         .resumen-item {
             display: flex;
             justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #e9edf2;
+            padding: 10px 0;
+            border-bottom: 1px solid #e2e8f0;
+            font-weight: 500;
+            font-size: 15px;
         }
+
         .resumen-item:last-child {
             border-bottom: none;
         }
+
         .resumen .valor {
             font-weight: 700;
+            font-size: 16px;
         }
-        .resumen .ingreso { color: #0d6b3e; }
-        .resumen .gasto { color: #b91c1c; }
-        .resumen .balance { color: #1a2a3a; }
-        .debug {
-            margin-top: 12px;
-            padding: 10px;
-            background: #f1f3f4;
-            border-radius: 8px;
-            font-size: 12px;
-            color: #5f6368;
-            display: none;
-            word-break: break-all;
+
+        .resumen .ingreso { 
+            color: #0d6b3e; 
+            background: #dcfce7;
+            padding: 2px 12px;
+            border-radius: 20px;
         }
+
+        .resumen .gasto { 
+            color: #991b1b; 
+            background: #fee2e2;
+            padding: 2px 12px;
+            border-radius: 20px;
+        }
+
+        .resumen .balance { 
+            color: #0b2a4a; 
+            background: #e2e8f0;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-weight: 700;
+        }
+
+        /* ===== PIE DE PÁGINA ===== */
+        .footer {
+            margin-top: 24px;
+            text-align: center;
+            font-size: 14px;
+            color: #64748b;
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .footer a {
+            color: #1a73e8;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 30px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            background: #eef2ff;
+        }
+
+        .footer a:hover {
+            background: #1a73e8;
+            color: white;
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+        }
+
+        /* ===== LOADING ===== */
         .loading {
             display: none;
             text-align: center;
-            margin-top: 12px;
+            margin-top: 14px;
             color: #1a73e8;
             font-weight: 600;
+            font-size: 15px;
+        }
+
+        /* ===== DEBUG ===== */
+        .debug {
+            margin-top: 14px;
+            padding: 12px 14px;
+            background: #0b1a33;
+            color: #b0c4de;
+            border-radius: 14px;
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+            display: none;
+            word-break: break-all;
+            border: 1px solid #2a4a6a;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 480px) {
+            .container {
+                padding: 24px 18px;
+                border-radius: 24px;
+            }
+            h1 {
+                font-size: 22px;
+            }
+            button {
+                font-size: 17px;
+                padding: 14px;
+            }
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>💰 Agente <span class="badge">v1.0</span></h1>
-    <p style="color:#6b7a8a;margin-top:-8px;">Registra tus ingresos y gastos</p>
+    <!-- ENCABEZADO -->
+    <div class="header">
+        <h1>💰 Agente <span>v1.0</span></h1>
+    </div>
+    <p class="subtitle">📋 Registra tus ingresos y gastos</p>
 
+    <!-- FORMULARIO -->
     <form id="formRegistro">
         <label>📅 Fecha</label>
         <input type="date" id="fecha" required>
@@ -172,14 +320,14 @@
 
         <label>📂 Categoría</label>
         <select id="categoria" required>
-            <option value="Comida">Comida</option>
-            <option value="Transporte">Transporte</option>
-            <option value="Vivienda">Vivienda</option>
-            <option value="Salud">Salud</option>
-            <option value="Educación">Educación</option>
-            <option value="Entretenimiento">Entretenimiento</option>
-            <option value="Sueldo">Sueldo</option>
-            <option value="Otros">Otros</option>
+            <option value="Comida">🍕 Comida</option>
+            <option value="Transporte">🚗 Transporte</option>
+            <option value="Vivienda">🏠 Vivienda</option>
+            <option value="Salud">💊 Salud</option>
+            <option value="Educación">📚 Educación</option>
+            <option value="Entretenimiento">🎮 Entretenimiento</option>
+            <option value="Sueldo">💼 Sueldo</option>
+            <option value="Otros">📦 Otros</option>
         </select>
 
         <label>📝 Descripción (opcional)</label>
@@ -201,19 +349,35 @@
         <button type="submit">💾 Guardar registro</button>
     </form>
 
+    <!-- LOADING -->
     <div id="loading" class="loading">⏳ Guardando...</div>
+
+    <!-- MENSAJES -->
     <div id="mensaje" class="msg"></div>
+
+    <!-- DEBUG -->
     <div id="debugInfo" class="debug"></div>
 
+    <!-- RESUMEN -->
     <div id="resumen" class="resumen">
         <h3>📊 Resumen rápido</h3>
-        <div class="resumen-item"><span>💚 Ingresos</span><span class="valor ingreso" id="totalIngresos">0</span></div>
-        <div class="resumen-item"><span>❤️ Gastos</span><span class="valor gasto" id="totalGastos">0</span></div>
-        <div class="resumen-item"><span>⚖️ Balance</span><span class="valor balance" id="balance">0</span></div>
+        <div class="resumen-item">
+            <span>💚 Ingresos</span>
+            <span class="valor ingreso" id="totalIngresos">0</span>
+        </div>
+        <div class="resumen-item">
+            <span>❤️ Gastos</span>
+            <span class="valor gasto" id="totalGastos">0</span>
+        </div>
+        <div class="resumen-item">
+            <span>⚖️ Balance</span>
+            <span class="valor balance" id="balance">0</span>
+        </div>
     </div>
 
+    <!-- PIE DE PÁGINA -->
     <div class="footer">
-        <a id="btnDescargar">📥 Descargar Excel</a> · 
+        <a id="btnDescargar">📥 Descargar Excel</a>
         <a id="btnActualizar">🔄 Actualizar resumen</a>
     </div>
 </div>
@@ -224,12 +388,10 @@
     // ============================================================
     const URL_AGENTE = "https://script.google.com/macros/s/AKfycbxRdk4PnI6GdW3WgJNH0u5ji2XhLe1rSXXuyXU4B-_zcom1Zas5tpKMa6JWMJhqY4Lo8g/exec";
     const ID_PLANILLA = "1z3iv1BUcrKKCsoE8eo2iF5zz3KZkkuXvQXHNlWg2cSA";
-    
-    // 🔥 PROXY ACTUALIZADO - MÁS CONFIABLE
     const PROXY_URL = "https://corsproxy.io/?";
 
     // ============================================================
-    // CÓDIGO DEL AGENTE
+    // CÓDIGO DEL AGENTE (igual que antes)
     // ============================================================
     const form = document.getElementById('formRegistro');
     const mensaje = document.getElementById('mensaje');
@@ -248,7 +410,6 @@
         debugInfo.textContent = texto;
     }
 
-    // ========== GUARDAR REGISTRO ==========
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         mensaje.className = 'msg';
@@ -269,15 +430,11 @@
         mostrarDebug('Enviando datos: ' + JSON.stringify(data, null, 2));
 
         try {
-            // Usar proxy para evitar CORS
             const params = new URLSearchParams(data);
             const urlConDatos = URL_AGENTE + '?' + params.toString();
             const urlProxy = PROXY_URL + encodeURIComponent(urlConDatos);
 
-            const response = await fetch(urlProxy, {
-                method: 'GET'
-            });
-
+            const response = await fetch(urlProxy, { method: 'GET' });
             const result = await response.text();
             mostrarDebug('Respuesta del servidor: ' + result);
 
@@ -297,7 +454,6 @@
             }
 
         } catch (error) {
-            // Si el proxy falla, intentar directamente con POST
             try {
                 mostrarDebug('Proxy falló, intentando POST directo...');
                 const response = await fetch(URL_AGENTE, {
@@ -307,7 +463,7 @@
                 });
                 const result = await response.text();
                 mostrarDebug('Respuesta directa: ' + result);
-                
+
                 try {
                     const json = JSON.parse(result);
                     if (json.status === 'success') {
@@ -331,42 +487,34 @@
         loading.style.display = 'none';
     });
 
-    // ========== CARGAR RESUMEN ==========
     async function cargarResumen() {
         try {
             const urlProxy = PROXY_URL + encodeURIComponent(URL_AGENTE);
             const response = await fetch(urlProxy);
             const data = await response.json();
-            
+
             if (data.totalIngresos !== undefined) {
                 resumenDiv.style.display = 'block';
-                document.getElementById('totalIngresos').textContent = 
-                    data.totalIngresos.toLocaleString() + ' ₲';
-                document.getElementById('totalGastos').textContent = 
-                    data.totalGastos.toLocaleString() + ' ₲';
-                document.getElementById('balance').textContent = 
-                    data.balance.toLocaleString() + ' ₲';
+                document.getElementById('totalIngresos').textContent = data.totalIngresos.toLocaleString() + ' ₲';
+                document.getElementById('totalGastos').textContent = data.totalGastos.toLocaleString() + ' ₲';
+                document.getElementById('balance').textContent = data.balance.toLocaleString() + ' ₲';
             }
         } catch (error) {
             console.log('Resumen no disponible:', error);
         }
     }
 
-    // ========== DESCARGAR EXCEL ==========
     document.getElementById('btnDescargar').addEventListener('click', (e) => {
         e.preventDefault();
         window.open('https://docs.google.com/spreadsheets/d/' + ID_PLANILLA + '/edit', '_blank');
     });
 
-    // ========== ACTUALIZAR RESUMEN ==========
     document.getElementById('btnActualizar').addEventListener('click', (e) => {
         e.preventDefault();
         cargarResumen();
     });
 
-    // ========== INICIALIZAR FECHA ==========
     document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
-
     cargarResumen();
 </script>
 </body>
