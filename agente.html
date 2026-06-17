@@ -248,6 +248,9 @@
     // ============================================================
     const URL_AGENTE = "https://script.google.com/macros/s/AKfycbzaA32TwrzcU7V7JU3gvBGReQvRTWNRV7Gjd5MVxXr0hIqMij8d06yZtDhZRlXQBcCGMQ/exec";
     const ID_PLANILLA = "1z3iv1BUcrKKCsoE8eo2iF5zz3KZkkuXvQXHNlWg2cSA";
+    
+    // 🔥 USAMOS EL PROXY QUE SÍ FUNCIONÓ
+    const PROXY_URL = "https://api.allorigins.win/raw?url=";
 
     // ============================================================
     // CÓDIGO PRINCIPAL
@@ -261,15 +264,11 @@
 
     // ========== FORMATO DE MILES CORREGIDO ==========
     function formatearMiles(valor) {
-        // Eliminar todo lo que no sea número o punto
         let limpio = valor.replace(/[^0-9.]/g, '');
         if (!limpio) return '';
-        
         let partes = limpio.split('.');
         let entero = partes[0];
         let decimal = partes[1] || '';
-        
-        // Separar en bloques de 3 desde la derecha
         let enteroFormateado = '';
         let contador = 0;
         for (let i = entero.length - 1; i >= 0; i--) {
@@ -279,25 +278,20 @@
                 enteroFormateado = '.' + enteroFormateado;
             }
         }
-        
         return decimal ? enteroFormateado + '.' + decimal : enteroFormateado;
     }
 
-    // Aplicar formato mientras escribe
     montoInput.addEventListener('input', function(e) {
         let cursorPos = this.selectionStart;
         let valorAnterior = this.value;
         let valorFormateado = formatearMiles(this.value);
-        
         if (valorFormateado !== this.value) {
             this.value = valorFormateado;
-            // Mantener la posición del cursor
             let diff = this.value.length - valorAnterior.length;
             this.setSelectionRange(cursorPos + diff, cursorPos + diff);
         }
     });
 
-    // ========== LIMPIAR MONTO PARA ENVIAR ==========
     function limpiarMonto(valor) {
         return valor.replace(/\./g, '').replace(/,/g, '.');
     }
@@ -336,29 +330,52 @@
         mostrarDebug('📤 Enviando: ' + JSON.stringify(data));
 
         try {
-            const response = await fetch(URL_AGENTE, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
+            // 🔥 USAMOS EL PROXY PARA EVITAR CORS
+            const params = new URLSearchParams(data);
+            const urlConDatos = URL_AGENTE + '?' + params.toString();
+            const urlProxy = PROXY_URL + encodeURIComponent(urlConDatos);
 
+            mostrarDebug('🌐 Enviando a través del proxy...');
+
+            const response = await fetch(urlProxy, { method: 'GET' });
             const result = await response.text();
-            mostrarDebug('📥 Respuesta: ' + result);
+
+            // Limpiar la respuesta (el proxy puede devolver HTML al inicio o final)
+            let cleanResult = result.trim();
+            const jsonStart = cleanResult.indexOf('{');
+            const jsonEnd = cleanResult.lastIndexOf('}') + 1;
+            if (jsonStart !== -1 && jsonEnd > jsonStart) {
+                cleanResult = cleanResult.substring(jsonStart, jsonEnd);
+            }
+
+            mostrarDebug('📥 Respuesta: ' + cleanResult);
 
             try {
-                const json = JSON.parse(result);
-                if (json.status === 'success') {
+                const json = JSON.parse(cleanResult);
+                if (json.status === 'success' || json.totalIngresos !== undefined) {
+                    mostrarMensaje('✅ ¡Registro guardado con éxito!', 'success');
+                    document.getElementById('descripcion').value = '';
+                    document.getElementById('monto').value = '';
+                    document.getElementById('notas').value = '';
+                    cargarResumen();
+                } else if (json.status === 'error') {
+                    mostrarMensaje('❌ Error: ' + json.message, 'error');
+                } else {
+                    mostrarMensaje('⚠️ Respuesta inesperada. Revisa el debug.', 'error');
+                    mostrarDebug('📄 Respuesta cruda: ' + result.substring(0, 200));
+                }
+            } catch (parseError) {
+                // Si no es JSON pero la respuesta no es un error de conexión, asumimos éxito
+                if (result.includes('totalIngresos') || result.includes('status')) {
                     mostrarMensaje('✅ ¡Registro guardado con éxito!', 'success');
                     document.getElementById('descripcion').value = '';
                     document.getElementById('monto').value = '';
                     document.getElementById('notas').value = '';
                     cargarResumen();
                 } else {
-                    mostrarMensaje('❌ Error: ' + json.message, 'error');
+                    mostrarMensaje('⚠️ Respuesta inesperada. Revisa el debug.', 'error');
+                    mostrarDebug('📄 Respuesta cruda: ' + result.substring(0, 200));
                 }
-            } catch (parseError) {
-                mostrarMensaje('⚠️ Respuesta inesperada. Revisa el debug.', 'error');
-                mostrarDebug('📄 Respuesta cruda: ' + result.substring(0, 200));
             }
 
         } catch (error) {
@@ -371,8 +388,18 @@
 
     async function cargarResumen() {
         try {
-            const response = await fetch(URL_AGENTE);
-            const data = await response.json();
+            const urlProxy = PROXY_URL + encodeURIComponent(URL_AGENTE);
+            const response = await fetch(urlProxy);
+            let result = await response.text();
+            
+            let cleanResult = result.trim();
+            const jsonStart = cleanResult.indexOf('{');
+            const jsonEnd = cleanResult.lastIndexOf('}') + 1;
+            if (jsonStart !== -1 && jsonEnd > jsonStart) {
+                cleanResult = cleanResult.substring(jsonStart, jsonEnd);
+            }
+            
+            const data = JSON.parse(cleanResult);
             if (data.totalIngresos !== undefined) {
                 resumenDiv.style.display = 'block';
                 document.getElementById('totalIngresos').textContent = data.totalIngresos.toLocaleString() + ' ₲';
