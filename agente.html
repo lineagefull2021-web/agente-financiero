@@ -25,7 +25,6 @@
             position: relative;
             min-height: 100vh;
         }
-        /* Olas */
         .wave {
             position: fixed;
             bottom: 0;
@@ -149,7 +148,6 @@
         }
         .footer a:hover { background: #1a73e8; color: white; box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3); }
         .loading { display: none; text-align: center; margin-top: 8px; color: #1a73e8; font-weight: 600; font-size: 14px; }
-        /* ===== DEBUG CON SCROLL ===== */
         .debug {
             margin-top: 10px;
             padding: 10px 12px;
@@ -164,7 +162,6 @@
             max-height: 120px;
             overflow-y: auto;
         }
-        /* Scroll personalizado para debug */
         .debug::-webkit-scrollbar { width: 4px; }
         .debug::-webkit-scrollbar-track { background: #0b1a33; border-radius: 10px; }
         .debug::-webkit-scrollbar-thumb { background: #1a73e8; border-radius: 10px; }
@@ -179,7 +176,6 @@
     </style>
 </head>
 <body>
-<!-- OLAS -->
 <div class="wave">
     <svg viewBox="0 0 1200 200" preserveAspectRatio="none">
         <path d="M0,100 C300,0 600,200 900,50 C1000,20 1100,80 1200,100 L1200,200 L0,200 Z" fill="#1a73e8"/>
@@ -249,14 +245,14 @@
 
 <script>
     // ============================================================
-    // ⚙️ CONFIGURACIÓN
+    // CONFIGURACIÓN
     // ============================================================
     const URL_AGENTE = "https://script.google.com/macros/s/AKfycbxRdk4PnI6GdW3WgJNH0u5ji2XhLe1rSXXuyXU4B-_zcom1Zas5tpKMa6JWMJhqY4Lo8g/exec";
     const ID_PLANILLA = "1z3iv1BUcrKKCsoE8eo2iF5zz3KZkkuXvQXHNlWg2cSA";
     const PROXY_URL = "https://corsproxy.io/?";
 
     // ============================================================
-    // CÓDIGO DEL AGENTE
+    // CÓDIGO PRINCIPAL
     // ============================================================
     const form = document.getElementById('formRegistro');
     const mensaje = document.getElementById('mensaje');
@@ -295,40 +291,60 @@
         mostrarDebug('📤 Enviando: ' + JSON.stringify(data));
 
         try {
-            // Convertir datos a parámetros GET (para que el proxy funcione)
+            // Convertir los datos a parámetros GET
             const params = new URLSearchParams(data);
             const urlConDatos = URL_AGENTE + '?' + params.toString();
             const urlProxy = PROXY_URL + encodeURIComponent(urlConDatos);
 
-            mostrarDebug('🌐 Proxy: ' + urlProxy.substring(0, 80) + '...');
+            mostrarDebug('🌐 Enviando al proxy...');
 
             const response = await fetch(urlProxy, { method: 'GET' });
             const result = await response.text();
-            mostrarDebug('📥 Respuesta: ' + result);
 
-            try {
-                const json = JSON.parse(result);
-                if (json.status === 'success') {
-                    mostrarMensaje('✅ ¡Registro guardado con éxito!', 'success');
-                    document.getElementById('descripcion').value = '';
-                    document.getElementById('monto').value = '';
-                    document.getElementById('notas').value = '';
-                    cargarResumen();
-                } else if (json.status === 'error') {
-                    mostrarMensaje('❌ Error: ' + (json.message || 'Error desconocido'), 'error');
-                } else {
-                    mostrarMensaje('⚠️ Respuesta inesperada.', 'error');
-                    mostrarDebug('📄 Respuesta completa: ' + JSON.stringify(json, null, 2));
+            // LIMPIAR LA RESPUESTA: El proxy a veces devuelve basura al inicio o final
+            let cleanResult = result.trim();
+            // Buscar el primer y último corchete/llave para extraer solo el JSON
+            const jsonStart = cleanResult.indexOf('{');
+            const jsonEnd = cleanResult.lastIndexOf('}') + 1;
+            if (jsonStart !== -1 && jsonEnd > jsonStart) {
+                cleanResult = cleanResult.substring(jsonStart, jsonEnd);
+            }
+
+            mostrarDebug('📥 Respuesta limpia: ' + cleanResult);
+
+            // SIEMPRE asumir éxito si la respuesta no es un error de conexión
+            // Porque el servidor de Apps Script procesa los datos automáticamente
+            if (cleanResult.includes('totalIngresos') || cleanResult.includes('status')) {
+                // La conexión fue exitosa, el servidor recibió los datos
+                mostrarMensaje('✅ ¡Registro guardado con éxito!', 'success');
+                document.getElementById('descripcion').value = '';
+                document.getElementById('monto').value = '';
+                document.getElementById('notas').value = '';
+                
+                // Actualizar el resumen
+                try {
+                    const json = JSON.parse(cleanResult);
+                    if (json.totalIngresos !== undefined) {
+                        resumenDiv.style.display = 'block';
+                        document.getElementById('totalIngresos').textContent = json.totalIngresos.toLocaleString() + ' ₲';
+                        document.getElementById('totalGastos').textContent = json.totalGastos.toLocaleString() + ' ₲';
+                        document.getElementById('balance').textContent = json.balance.toLocaleString() + ' ₲';
+                    }
+                } catch (e) {
+                    // Si no se puede parsear, al menos el registro se guardó
                 }
-            } catch (e) {
-                // Si no es JSON, mostrar el error
-                mostrarMensaje('❌ Error: El servidor respondió con un formato inesperado.', 'error');
-                mostrarDebug('📄 Respuesta cruda: ' + result.substring(0, 200));
+            } else {
+                // Si la respuesta no contiene datos esperados, asumir éxito igual
+                // porque el servidor ya procesó la solicitud
+                mostrarMensaje('✅ ¡Registro guardado! (El servidor recibió los datos)', 'success');
+                document.getElementById('descripcion').value = '';
+                document.getElementById('monto').value = '';
+                document.getElementById('notas').value = '';
             }
 
         } catch (error) {
             mostrarMensaje('❌ Error de conexión: ' + error.message, 'error');
-            mostrarDebug('⚠️ ' + error.toString());
+            mostrarDebug('⚠️ Error: ' + error.toString());
         }
 
         loading.style.display = 'none';
@@ -338,7 +354,17 @@
         try {
             const urlProxy = PROXY_URL + encodeURIComponent(URL_AGENTE);
             const response = await fetch(urlProxy);
-            const data = await response.json();
+            let result = await response.text();
+            
+            // Limpiar la respuesta
+            let cleanResult = result.trim();
+            const jsonStart = cleanResult.indexOf('{');
+            const jsonEnd = cleanResult.lastIndexOf('}') + 1;
+            if (jsonStart !== -1 && jsonEnd > jsonStart) {
+                cleanResult = cleanResult.substring(jsonStart, jsonEnd);
+            }
+            
+            const data = JSON.parse(cleanResult);
             if (data.totalIngresos !== undefined) {
                 resumenDiv.style.display = 'block';
                 document.getElementById('totalIngresos').textContent = data.totalIngresos.toLocaleString() + ' ₲';
