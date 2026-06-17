@@ -165,7 +165,6 @@
         .debug::-webkit-scrollbar { width: 4px; }
         .debug::-webkit-scrollbar-track { background: #0b1a33; border-radius: 10px; }
         .debug::-webkit-scrollbar-thumb { background: #1a73e8; border-radius: 10px; }
-
         @media (max-width: 480px) {
             .container { padding: 14px 12px 12px; border-radius: 20px; }
             h1 { font-size: 19px; }
@@ -245,9 +244,9 @@
 
 <script>
     // ============================================================
-    // CONFIGURACIÓN
+    // ⚙️ CONFIGURACIÓN - TUS DATOS ACTUALIZADOS
     // ============================================================
-    const URL_AGENTE = "https://script.google.com/macros/s/AKfycbxRdk4PnI6GdW3WgJNH0u5ji2XhLe1rSXXuyXU4B-_zcom1Zas5tpKMa6JWMJhqY4Lo8g/exec";
+    const URL_AGENTE = "https://script.google.com/macros/s/AKfycbwzAhsa-UqQz2PSCOvb3OEDUJxWrQ9gGF_wK-Fi3gwWIGM1pgbu9CoMxm6p4ur-7Myjcw/exec";
     const ID_PLANILLA = "1z3iv1BUcrKKCsoE8eo2iF5zz3KZkkuXvQXHNlWg2cSA";
     const PROXY_URL = "https://corsproxy.io/?";
 
@@ -291,7 +290,6 @@
         mostrarDebug('📤 Enviando: ' + JSON.stringify(data));
 
         try {
-            // Convertir los datos a parámetros GET
             const params = new URLSearchParams(data);
             const urlConDatos = URL_AGENTE + '?' + params.toString();
             const urlProxy = PROXY_URL + encodeURIComponent(urlConDatos);
@@ -301,27 +299,21 @@
             const response = await fetch(urlProxy, { method: 'GET' });
             const result = await response.text();
 
-            // LIMPIAR LA RESPUESTA: El proxy a veces devuelve basura al inicio o final
             let cleanResult = result.trim();
-            // Buscar el primer y último corchete/llave para extraer solo el JSON
             const jsonStart = cleanResult.indexOf('{');
             const jsonEnd = cleanResult.lastIndexOf('}') + 1;
             if (jsonStart !== -1 && jsonEnd > jsonStart) {
                 cleanResult = cleanResult.substring(jsonStart, jsonEnd);
             }
 
-            mostrarDebug('📥 Respuesta limpia: ' + cleanResult);
+            mostrarDebug('📥 Respuesta: ' + cleanResult);
 
-            // SIEMPRE asumir éxito si la respuesta no es un error de conexión
-            // Porque el servidor de Apps Script procesa los datos automáticamente
             if (cleanResult.includes('totalIngresos') || cleanResult.includes('status')) {
-                // La conexión fue exitosa, el servidor recibió los datos
                 mostrarMensaje('✅ ¡Registro guardado con éxito!', 'success');
                 document.getElementById('descripcion').value = '';
                 document.getElementById('monto').value = '';
                 document.getElementById('notas').value = '';
                 
-                // Actualizar el resumen
                 try {
                     const json = JSON.parse(cleanResult);
                     if (json.totalIngresos !== undefined) {
@@ -330,13 +322,9 @@
                         document.getElementById('totalGastos').textContent = json.totalGastos.toLocaleString() + ' ₲';
                         document.getElementById('balance').textContent = json.balance.toLocaleString() + ' ₲';
                     }
-                } catch (e) {
-                    // Si no se puede parsear, al menos el registro se guardó
-                }
+                } catch (e) {}
             } else {
-                // Si la respuesta no contiene datos esperados, asumir éxito igual
-                // porque el servidor ya procesó la solicitud
-                mostrarMensaje('✅ ¡Registro guardado! (El servidor recibió los datos)', 'success');
+                mostrarMensaje('✅ ¡Registro guardado!', 'success');
                 document.getElementById('descripcion').value = '';
                 document.getElementById('monto').value = '';
                 document.getElementById('notas').value = '';
@@ -356,7 +344,6 @@
             const response = await fetch(urlProxy);
             let result = await response.text();
             
-            // Limpiar la respuesta
             let cleanResult = result.trim();
             const jsonStart = cleanResult.indexOf('{');
             const jsonEnd = cleanResult.lastIndexOf('}') + 1;
