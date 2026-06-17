@@ -224,9 +224,11 @@
 
 <script>
     // ============================================================
-    // ⚙️ CONFIGURACIÓN - ¡CAMBIA ESTA URL POR LA TUYA!
+    // ⚙️ CONFIGURACIÓN - URLs CORRECTAS
     // ============================================================
     const URL_AGENTE = "https://script.google.com/macros/s/AKfycbyb3nFaLrB7ppVnNLbm7OGZmizkTH8IluL5ug8ruHemnDAB73XoVIcc-YNO-d9kONpQUg/exec";
+    const ID_PLANILLA = "1vR9WF-XWBYICz6EGvw8AtiZ5-B3-XuCDmfKk-hA_5bU";
+
     // ============================================================
     // CÓDIGO DEL AGENTE
     // ============================================================
@@ -319,8 +321,7 @@
     // ========== DESCARGAR EXCEL ==========
     document.getElementById('btnDescargar').addEventListener('click', (e) => {
         e.preventDefault();
-        // Reemplaza TU_ID con el ID de tu planilla
-        window.open('https://docs.google.com/spreadsheets/d/TU_ID/edit', '_blank');
+        window.open('https://docs.google.com/spreadsheets/d/' + ID_PLANILLA + '/edit', '_blank');
     });
 
     // ========== ACTUALIZAR RESUMEN ==========
