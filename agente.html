@@ -56,7 +56,6 @@
             border-radius: 12px;
             font-size: 16px;
             background: #fafbfc;
-            transition: 0.2s;
         }
         input:focus, select:focus {
             border-color: #1a73e8;
@@ -75,14 +74,9 @@
             font-weight: 700;
             cursor: pointer;
             margin-top: 24px;
-            transition: 0.2s;
         }
         button:hover {
             background: #1557b0;
-            transform: scale(1.01);
-        }
-        button:active {
-            transform: scale(0.98);
         }
         .msg {
             margin-top: 16px;
@@ -142,9 +136,6 @@
         .resumen .ingreso { color: #0d6b3e; }
         .resumen .gasto { color: #b91c1c; }
         .resumen .balance { color: #1a2a3a; }
-        @media (max-width: 480px) {
-            .row { flex-direction: column; gap: 0; }
-        }
         .debug {
             margin-top: 12px;
             padding: 10px;
@@ -229,13 +220,13 @@
 
 <script>
     // ============================================================
-    // ⚙️ CONFIGURACIÓN - DATOS ACTUALIZADOS
+    // ⚙️ CONFIGURACIÓN
     // ============================================================
     const URL_AGENTE = "https://script.google.com/macros/s/AKfycbxRdk4PnI6GdW3WgJNH0u5ji2XhLe1rSXXuyXU4B-_zcom1Zas5tpKMa6JWMJhqY4Lo8g/exec";
     const ID_PLANILLA = "1z3iv1BUcrKKCsoE8eo2iF5zz3KZkkuXvQXHNlWg2cSA";
     
-    // Proxy para evitar CORS en el celular
-    const PROXY_URL = "https://api.allorigins.win/raw?url=";
+    // 🔥 PROXY ACTUALIZADO - MÁS CONFIABLE
+    const PROXY_URL = "https://corsproxy.io/?";
 
     // ============================================================
     // CÓDIGO DEL AGENTE
@@ -278,28 +269,16 @@
         mostrarDebug('Enviando datos: ' + JSON.stringify(data, null, 2));
 
         try {
-            // Intentar primero con el proxy
+            // Usar proxy para evitar CORS
             const params = new URLSearchParams(data);
             const urlConDatos = URL_AGENTE + '?' + params.toString();
             const urlProxy = PROXY_URL + encodeURIComponent(urlConDatos);
 
-            let response = await fetch(urlProxy, {
+            const response = await fetch(urlProxy, {
                 method: 'GET'
             });
 
-            let result = await response.text();
-            
-            // Si el proxy devuelve HTML (error), intentar directamente
-            if (result.includes('<!DOCTYPE') || result.includes('html')) {
-                mostrarDebug('Proxy falló, intentando directo...');
-                response = await fetch(URL_AGENTE, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                result = await response.text();
-            }
-
+            const result = await response.text();
             mostrarDebug('Respuesta del servidor: ' + result);
 
             try {
@@ -318,7 +297,7 @@
             }
 
         } catch (error) {
-            // Si el proxy falla, intentar directamente
+            // Si el proxy falla, intentar directamente con POST
             try {
                 mostrarDebug('Proxy falló, intentando POST directo...');
                 const response = await fetch(URL_AGENTE, {
@@ -356,8 +335,8 @@
     async function cargarResumen() {
         try {
             const urlProxy = PROXY_URL + encodeURIComponent(URL_AGENTE);
-            let response = await fetch(urlProxy);
-            let data = await response.json();
+            const response = await fetch(urlProxy);
+            const data = await response.json();
             
             if (data.totalIngresos !== undefined) {
                 resumenDiv.style.display = 'block';
@@ -367,19 +346,6 @@
                     data.totalGastos.toLocaleString() + ' ₲';
                 document.getElementById('balance').textContent = 
                     data.balance.toLocaleString() + ' ₲';
-            } else {
-                // Si el proxy falla, intentar directo
-                response = await fetch(URL_AGENTE);
-                data = await response.json();
-                if (data.totalIngresos !== undefined) {
-                    resumenDiv.style.display = 'block';
-                    document.getElementById('totalIngresos').textContent = 
-                        data.totalIngresos.toLocaleString() + ' ₲';
-                    document.getElementById('totalGastos').textContent = 
-                        data.totalGastos.toLocaleString() + ' ₲';
-                    document.getElementById('balance').textContent = 
-                        data.balance.toLocaleString() + ' ₲';
-                }
             }
         } catch (error) {
             console.log('Resumen no disponible:', error);
