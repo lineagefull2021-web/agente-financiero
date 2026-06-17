@@ -213,7 +213,7 @@
         <label>📝 Descripción</label>
         <input type="text" id="descripcion" placeholder="Ej: Compra del supermercado">
         <label>💵 Monto</label>
-        <input type="text" id="monto" placeholder="0" required>
+        <input type="text" id="monto" inputmode="numeric" placeholder="0" required>
         <label>🪙 Moneda</label>
         <select id="moneda">
             <option value="GS">₲ Guaraníes</option>
@@ -244,7 +244,7 @@
 
 <script>
     // ============================================================
-    // ⚙️ CONFIGURACIÓN - TUS DATOS ACTUALIZADOS
+    // ⚙️ CONFIGURACIÓN - DATOS CORRECTOS
     // ============================================================
     const URL_AGENTE = "https://script.google.com/macros/s/AKfycbwNjQeJXEQRpB-cvH6FZrMRXwELq1XNiKZPRBNPVtzmir1OKj87stQJuP2wAoTCScB8_g/exec";
     const ID_PLANILLA = "1z3iv1BUcrKKCsoE8eo2iF5zz3KZkkuXvQXHNlWg2cSA";
@@ -262,15 +262,17 @@
 
     // ========== FORMATO DE MILES EN EL CAMPO MONTO ==========
     montoInput.addEventListener('input', function(e) {
+        // Permitir solo números y punto decimal
         let value = this.value.replace(/[^0-9.]/g, '');
         if (value) {
             let parts = value.split('.');
+            // Formatear la parte entera con puntos de miles
             parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
             this.value = parts.join('.');
         }
     });
 
-    // ========== LIMPIAR MONTO AL ENVIAR ==========
+    // ========== LIMPIAR MONTO AL ENVIAR (quitar puntos) ==========
     function limpiarMonto(valor) {
         return valor.replace(/\./g, '');
     }
