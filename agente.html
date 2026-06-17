@@ -148,6 +148,16 @@
         @media (max-width: 480px) {
             .row { flex-direction: column; gap: 0; }
         }
+        .debug {
+            margin-top: 12px;
+            padding: 10px;
+            background: #f1f3f4;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #5f6368;
+            display: none;
+            word-break: break-all;
+        }
     </style>
 </head>
 <body>
@@ -156,18 +166,15 @@
     <p style="color:#6b7a8a;margin-top:-8px;">Registra tus ingresos y gastos</p>
 
     <form id="formRegistro">
-        <!-- Fecha -->
         <label>📅 Fecha</label>
         <input type="date" id="fecha" required>
 
-        <!-- Tipo -->
         <label>📌 Tipo</label>
         <select id="tipo" required>
             <option value="Ingreso">✅ Ingreso</option>
             <option value="Gasto">❌ Gasto</option>
         </select>
 
-        <!-- Categoría -->
         <label>📂 Categoría</label>
         <select id="categoria" required>
             <option value="Comida">Comida</option>
@@ -180,15 +187,12 @@
             <option value="Otros">Otros</option>
         </select>
 
-        <!-- Descripción -->
         <label>📝 Descripción (opcional)</label>
         <input type="text" id="descripcion" placeholder="Ej: Compra del supermercado">
 
-        <!-- Monto -->
         <label>💵 Monto</label>
         <input type="number" id="monto" step="0.01" placeholder="0" required>
 
-        <!-- Moneda -->
         <label>🪙 Moneda</label>
         <select id="moneda">
             <option value="GS">₲ Guaraníes</option>
@@ -196,7 +200,6 @@
             <option value="EUR">€ Euros</option>
         </select>
 
-        <!-- Notas -->
         <label>📎 Notas (opcional)</label>
         <input type="text" id="notas" placeholder="Información adicional">
 
@@ -204,6 +207,7 @@
     </form>
 
     <div id="mensaje" class="msg"></div>
+    <div id="debugInfo" class="debug"></div>
 
     <div id="resumen" class="resumen">
         <h3>📊 Resumen rápido</h3>
@@ -219,18 +223,36 @@
 </div>
 
 <script>
-    // ⚙️ CONFIGURACIÓN - CAMBIA ESTA URL POR LA TUYA
-    "const URL_AGENTE = "https://script.google.com/macros/s/AKfycbyovfSjTjKJMuX8awSNTxU1rBIp4Tld6SgyAXKWnotehiAYPhOb_wcnBsqYtkzhQ5IFWA/exec";
-    // Elementos
+    // ============================================================
+    // ⚙️ CONFIGURACIÓN - ¡CAMBIA ESTA URL POR LA TUYA!
+    // ============================================================
+    const URL_AGENTE = "https://script.google.com/macros/s/AKfy.../exec";
+
+    // ============================================================
+    // CÓDIGO DEL AGENTE
+    // ============================================================
     const form = document.getElementById('formRegistro');
     const mensaje = document.getElementById('mensaje');
+    const debugInfo = document.getElementById('debugInfo');
     const resumenDiv = document.getElementById('resumen');
+
+    function mostrarMensaje(texto, tipo) {
+        mensaje.className = 'msg ' + tipo;
+        mensaje.style.display = 'block';
+        mensaje.textContent = texto;
+    }
+
+    function mostrarDebug(texto) {
+        debugInfo.style.display = 'block';
+        debugInfo.textContent = texto;
+    }
 
     // ========== GUARDAR REGISTRO ==========
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         mensaje.className = 'msg';
         mensaje.style.display = 'none';
+        debugInfo.style.display = 'none';
 
         const data = {
             fecha: document.getElementById('fecha').value,
@@ -242,30 +264,36 @@
             notas: document.getElementById('notas').value
         };
 
+        mostrarDebug('Enviando datos: ' + JSON.stringify(data, null, 2));
+
         try {
             const response = await fetch(URL_AGENTE, {
                 method: 'POST',
-                mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
 
-            mensaje.className = 'msg success';
-            mensaje.style.display = 'block';
-            mensaje.textContent = '✅ ¡Registro guardado con éxito!';
-            
-            // Limpiar algunos campos
-            document.getElementById('descripcion').value = '';
-            document.getElementById('monto').value = '';
-            document.getElementById('notas').value = '';
-            
-            // Actualizar resumen
-            cargarResumen();
+            const result = await response.text();
+            mostrarDebug('Respuesta del servidor: ' + result);
+
+            try {
+                const json = JSON.parse(result);
+                if (json.status === 'success') {
+                    mostrarMensaje('✅ ¡Registro guardado con éxito!', 'success');
+                    document.getElementById('descripcion').value = '';
+                    document.getElementById('monto').value = '';
+                    document.getElementById('notas').value = '';
+                    cargarResumen();
+                } else {
+                    mostrarMensaje('❌ Error: ' + json.message, 'error');
+                }
+            } catch (parseError) {
+                mostrarMensaje('❌ Error al interpretar la respuesta: ' + result.substring(0, 100), 'error');
+            }
 
         } catch (error) {
-            mensaje.className = 'msg error';
-            mensaje.style.display = 'block';
-            mensaje.textContent = '❌ Error al guardar: ' + error.message;
+            mostrarMensaje('❌ Error de conexión: ' + error.message, 'error');
+            mostrarDebug('Error detallado: ' + error.toString());
         }
     });
 
@@ -292,9 +320,8 @@
     // ========== DESCARGAR EXCEL ==========
     document.getElementById('btnDescargar').addEventListener('click', (e) => {
         e.preventDefault();
-        // Abre la planilla de Google Sheets en una nueva pestaña
-        const sheetUrl = URL_AGENTE.replace('/exec', '/edit');
-        window.open(sheetUrl, '_blank');
+        // Reemplaza TU_ID con el ID de tu planilla
+        window.open('https://docs.google.com/spreadsheets/d/TU_ID/edit', '_blank');
     });
 
     // ========== ACTUALIZAR RESUMEN ==========
@@ -306,7 +333,6 @@
     // ========== INICIALIZAR FECHA ==========
     document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
 
-    // Cargar resumen al abrir
     cargarResumen();
 </script>
 </body>
