@@ -64,13 +64,6 @@
             background: white;
             box-shadow: 0 0 0 3px rgba(26,115,232,0.2);
         }
-        .row {
-            display: flex;
-            gap: 12px;
-        }
-        .row > * {
-            flex: 1;
-        }
         button {
             width: 100%;
             padding: 14px;
@@ -117,6 +110,10 @@
         .footer a {
             color: #1a73e8;
             text-decoration: none;
+            cursor: pointer;
+        }
+        .footer a:hover {
+            text-decoration: underline;
         }
         .resumen {
             margin-top: 24px;
@@ -157,6 +154,13 @@
             color: #5f6368;
             display: none;
             word-break: break-all;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 12px;
+            color: #1a73e8;
+            font-weight: 600;
         }
     </style>
 </head>
@@ -206,6 +210,7 @@
         <button type="submit">💾 Guardar registro</button>
     </form>
 
+    <div id="loading" class="loading">⏳ Guardando...</div>
     <div id="mensaje" class="msg"></div>
     <div id="debugInfo" class="debug"></div>
 
@@ -217,17 +222,20 @@
     </div>
 
     <div class="footer">
-        <a href="#" id="btnDescargar">📥 Descargar Excel</a> · 
-        <a href="#" id="btnActualizar">🔄 Actualizar resumen</a>
+        <a id="btnDescargar">📥 Descargar Excel</a> · 
+        <a id="btnActualizar">🔄 Actualizar resumen</a>
     </div>
 </div>
 
 <script>
     // ============================================================
-    // ⚙️ CONFIGURACIÓN - URLs CORRECTAS
+    // ⚙️ CONFIGURACIÓN
     // ============================================================
-    const URL_AGENTE = "https://script.google.com/macros/s/AKfycbz52hSxWlBdqN8AKpdwel31SH0euYTXcFNLTlD-11OySfPrn_CpR9OA1GFjRcoljyUHbg/exec";
+    const URL_AGENTE = "https://script.google.com/macros/s/AKfycbyb3nFaLrB7ppVnNLbm7OGZmizkTH8IluL5ug8ruHemnDAB73XoVIcc-YNO-d9kONpQUg/exec";
     const ID_PLANILLA = "1vR9WF-XWBYICz6EGvw8AtiZ5-B3-XuCDmfKk-hA_5bU";
+    
+    // Proxy para evitar CORS en el celular
+    const PROXY_URL = "https://api.allorigins.win/raw?url=";
 
     // ============================================================
     // CÓDIGO DEL AGENTE
@@ -236,6 +244,7 @@
     const mensaje = document.getElementById('mensaje');
     const debugInfo = document.getElementById('debugInfo');
     const resumenDiv = document.getElementById('resumen');
+    const loading = document.getElementById('loading');
 
     function mostrarMensaje(texto, tipo) {
         mensaje.className = 'msg ' + tipo;
@@ -254,6 +263,7 @@
         mensaje.className = 'msg';
         mensaje.style.display = 'none';
         debugInfo.style.display = 'none';
+        loading.style.display = 'block';
 
         const data = {
             fecha: document.getElementById('fecha').value,
@@ -265,16 +275,32 @@
             notas: document.getElementById('notas').value
         };
 
-        mostrarDebug('Enviando datos: ' + JSON.stringify(data, null, 2));
+        // Construir URL con los datos como parámetros (para el proxy)
+        const params = new URLSearchParams(data);
+        const urlConDatos = URL_AGENTE + '?' + params.toString();
+        const urlProxy = PROXY_URL + encodeURIComponent(urlConDatos);
+
+        mostrarDebug('Enviando a través de proxy: ' + urlProxy);
 
         try {
-            const response = await fetch(URL_AGENTE, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
+            // Intentar primero con el proxy
+            let response = await fetch(urlProxy, {
+                method: 'GET'
             });
 
-            const result = await response.text();
+            let result = await response.text();
+            
+            // Si el proxy devuelve HTML (error), intentar directamente
+            if (result.includes('<!DOCTYPE') || result.includes('html')) {
+                mostrarDebug('Proxy falló, intentando directo...');
+                response = await fetch(URL_AGENTE, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                result = await response.text();
+            }
+
             mostrarDebug('Respuesta del servidor: ' + result);
 
             try {
@@ -293,16 +319,52 @@
             }
 
         } catch (error) {
-            mostrarMensaje('❌ Error de conexión: ' + error.message, 'error');
-            mostrarDebug('Error detallado: ' + error.toString());
+            // Si el proxy falla, intentar directamente
+            try {
+                mostrarDebug('Proxy falló, intentando POST directo...');
+                const response = await fetch(URL_AGENTE, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.text();
+                mostrarDebug('Respuesta directa: ' + result);
+                
+                try {
+                    const json = JSON.parse(result);
+                    if (json.status === 'success') {
+                        mostrarMensaje('✅ ¡Registro guardado con éxito!', 'success');
+                        document.getElementById('descripcion').value = '';
+                        document.getElementById('monto').value = '';
+                        document.getElementById('notas').value = '';
+                        cargarResumen();
+                    } else {
+                        mostrarMensaje('❌ Error: ' + json.message, 'error');
+                    }
+                } catch (parseError) {
+                    mostrarMensaje('❌ Error al interpretar la respuesta: ' + result.substring(0, 100), 'error');
+                }
+            } catch (error2) {
+                mostrarMensaje('❌ Error de conexión: ' + error2.message, 'error');
+                mostrarDebug('Error detallado: ' + error2.toString());
+            }
         }
+
+        loading.style.display = 'none';
     });
 
     // ========== CARGAR RESUMEN ==========
     async function cargarResumen() {
         try {
-            const response = await fetch(URL_AGENTE);
-            const data = await response.json();
+            const urlProxy = PROXY_URL + encodeURIComponent(URL_AGENTE);
+            let response = await fetch(urlProxy);
+            let data = await response.json();
+            
+            // Si el proxy devuelve HTML, intentar directo
+            if (data.error || data.includes) {
+                response = await fetch(URL_AGENTE);
+                data = await response.json();
+            }
             
             if (data.totalIngresos !== undefined) {
                 resumenDiv.style.display = 'block';
