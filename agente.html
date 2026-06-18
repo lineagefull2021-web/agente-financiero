@@ -9,22 +9,20 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
-        }
-        html, body {
-            min-height: 100vh;
-            overflow-y: auto;
+            font-family: 'Segoe UI', Roboto, sans-serif;
         }
         body {
+            min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
-            padding: 20px 16px;
+            align-items: center;
+            padding: 20px;
             background: linear-gradient(145deg, #0b1a33 0%, #1a3a5c 100%);
             background-attachment: fixed;
             position: relative;
-            min-height: 100vh;
+            overflow: hidden;
         }
+        /* EFECTO DE OLAS (como el agente anterior) */
         .wave {
             position: fixed;
             bottom: 0;
@@ -33,7 +31,7 @@
             height: 100%;
             pointer-events: none;
             z-index: 0;
-            opacity: 0.12;
+            opacity: 0.10;
         }
         .wave svg {
             position: absolute;
@@ -53,86 +51,64 @@
         .container {
             position: relative;
             z-index: 1;
-            background: rgba(255, 255, 255, 0.94);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(12px);
-            max-width: 420px;
+            max-width: 480px;
             width: 100%;
-            padding: 18px 16px 16px;
-            border-radius: 28px;
+            padding: 28px 24px;
+            border-radius: 32px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
             border: 1px solid rgba(255, 255, 255, 0.15);
-            margin: 10px 0;
+            text-align: center;
         }
-        .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; }
-        h1 { font-size: 22px; font-weight: 700; color: #0b2a4a; display: flex; align-items: center; gap: 8px; }
-        h1 span { background: linear-gradient(145deg, #1a73e8, #0d47a1); color: white; font-size: 11px; font-weight: 600; padding: 2px 12px; border-radius: 30px; box-shadow: 0 2px 8px rgba(26, 115, 232, 0.3); }
-        .subtitle { color: #4a6a8a; font-size: 13px; margin-top: -2px; margin-bottom: 12px; border-left: 3px solid #1a73e8; padding-left: 10px; }
-        label { font-weight: 600; display: block; margin: 8px 0 3px; font-size: 13px; color: #1a3a5c; }
-        input, select {
-            width: 100%;
-            padding: 9px 12px;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            font-size: 15px;
-            background: #f8fafc;
-            transition: all 0.2s ease;
-            color: #0b1a33;
-            font-weight: 500;
-        }
-        input:focus, select:focus { border-color: #1a73e8; outline: none; background: white; box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.12); }
-        button {
-            width: 100%;
-            padding: 12px;
-            margin-top: 16px;
-            background: linear-gradient(145deg, #0d9488, #0d6b3e);
-            color: white;
-            border: none;
-            border-radius: 14px;
-            font-size: 17px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 6px 20px rgba(13, 107, 62, 0.3);
+        .header {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
+            margin-bottom: 4px;
         }
-        button:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(13, 107, 62, 0.4); }
-        .msg {
-            margin-top: 10px;
-            padding: 10px 14px;
-            border-radius: 12px;
-            display: none;
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0b2a4a;
+        }
+        .badge {
+            background: linear-gradient(145deg, #1a73e8, #0d47a1);
+            color: white;
+            font-size: 11px;
             font-weight: 600;
+            padding: 4px 14px;
+            border-radius: 30px;
+            box-shadow: 0 2px 8px rgba(26, 115, 232, 0.3);
+        }
+        .subtitle {
+            color: #4a6a8a;
             font-size: 14px;
-            text-align: center;
+            margin-bottom: 20px;
+            border-left: 3px solid #1a73e8;
+            padding-left: 12px;
+            text-align: left;
         }
-        .msg.success { background: #dcfce7; color: #0d6b3e; display: block; border-left: 5px solid #0d6b3e; }
-        .msg.error { background: #fee2e2; color: #991b1b; display: block; border-left: 5px solid #991b1b; }
-        .resumen {
-            margin-top: 14px;
-            background: #f1f5f9;
+        .form-wrapper {
+            width: 100%;
             border-radius: 16px;
-            padding: 12px 14px 10px;
-            display: none;
-            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
         }
-        .resumen h3 { font-size: 14px; color: #0b2a4a; margin-bottom: 6px; }
-        .resumen-item { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #e2e8f0; font-size: 13px; }
-        .resumen-item:last-child { border-bottom: none; }
-        .resumen .valor { font-weight: 700; font-size: 14px; }
-        .resumen .ingreso { color: #0d6b3e; background: #dcfce7; padding: 0 12px; border-radius: 20px; }
-        .resumen .gasto { color: #991b1b; background: #fee2e2; padding: 0 12px; border-radius: 20px; }
-        .resumen .balance { color: #0b2a4a; background: #e2e8f0; padding: 0 12px; border-radius: 20px; }
+        .form-wrapper iframe {
+            width: 100%;
+            height: 580px;
+            border: none;
+            border-radius: 16px;
+        }
         .footer {
-            margin-top: 12px;
-            text-align: center;
+            margin-top: 16px;
             font-size: 13px;
             color: #64748b;
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 16px;
             flex-wrap: wrap;
         }
         .footer a {
@@ -141,308 +117,62 @@
             font-weight: 600;
             padding: 4px 12px;
             border-radius: 30px;
-            transition: all 0.2s ease;
-            cursor: pointer;
             background: #eef2ff;
             font-size: 13px;
+            cursor: pointer;
+            transition: 0.3s;
         }
-        .footer a:hover { background: #1a73e8; color: white; box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3); }
-        .loading { display: none; text-align: center; margin-top: 8px; color: #1a73e8; font-weight: 600; font-size: 14px; }
-        .debug {
-            margin-top: 10px;
-            padding: 10px 12px;
-            background: #0b1a33;
-            color: #b0c4de;
-            border-radius: 12px;
-            font-size: 11px;
-            font-family: 'Courier New', monospace;
-            display: none;
-            word-break: break-all;
-            border: 1px solid #2a4a6a;
-            max-height: 120px;
-            overflow-y: auto;
+        .footer a:hover {
+            background: #1a73e8;
+            color: white;
         }
-        .debug::-webkit-scrollbar { width: 4px; }
-        .debug::-webkit-scrollbar-track { background: #0b1a33; border-radius: 10px; }
-        .debug::-webkit-scrollbar-thumb { background: #1a73e8; border-radius: 10px; }
         @media (max-width: 480px) {
-            .container { padding: 14px 12px 12px; border-radius: 20px; }
-            h1 { font-size: 19px; }
-            button { font-size: 15px; padding: 11px; }
-            input, select { padding: 8px 10px; font-size: 14px; }
-            label { font-size: 12px; margin: 6px 0 2px; }
+            .container { padding: 18px 14px; }
+            h1 { font-size: 20px; }
+            .form-wrapper iframe { height: 520px; }
         }
     </style>
 </head>
 <body>
-<div class="wave">
-    <svg viewBox="0 0 1200 200" preserveAspectRatio="none">
-        <path d="M0,100 C300,0 600,200 900,50 C1000,20 1100,80 1200,100 L1200,200 L0,200 Z" fill="#1a73e8"/>
-    </svg>
-    <svg viewBox="0 0 1200 200" preserveAspectRatio="none">
-        <path d="M0,100 C200,150 500,20 800,120 C950,170 1050,100 1200,120 L1200,200 L0,200 Z" fill="#0d47a1"/>
-    </svg>
-    <svg viewBox="0 0 1200 200" preserveAspectRatio="none">
-        <path d="M0,80 C400,160 700,20 1000,100 C1100,130 1150,90 1200,90 L1200,200 L0,200 Z" fill="#1a3a5c"/>
-    </svg>
-</div>
-
-<div class="container">
-    <div class="header"><h1>💰 Agente <span>v1.0</span></h1></div>
-    <p class="subtitle">📋 Registra tus ingresos y gastos</p>
-
-    <form id="formRegistro">
-        <label>📅 Fecha</label>
-        <input type="date" id="fecha" required>
-        <label>📌 Tipo</label>
-        <select id="tipo" required>
-            <option value="Ingreso">✅ Ingreso</option>
-            <option value="Gasto">❌ Gasto</option>
-        </select>
-        <label>📂 Categoría</label>
-        <select id="categoria" required>
-            <option value="Comida">🍕 Comida</option>
-            <option value="Transporte">🚗 Transporte</option>
-            <option value="Vivienda">🏠 Vivienda</option>
-            <option value="Salud">💊 Salud</option>
-            <option value="Educación">📚 Educación</option>
-            <option value="Entretenimiento">🎮 Entretenimiento</option>
-            <option value="Sueldo">💼 Sueldo</option>
-            <option value="Otros">📦 Otros</option>
-        </select>
-        <label>📝 Descripción</label>
-        <input type="text" id="descripcion" placeholder="Ej: Compra del supermercado">
-        <label>💵 Monto</label>
-        <input type="text" id="monto" inputmode="numeric" placeholder="0" required>
-        <label>🪙 Moneda</label>
-        <select id="moneda">
-            <option value="GS">₲ Guaraníes</option>
-            <option value="USD">$ Dólares</option>
-            <option value="EUR">€ Euros</option>
-        </select>
-        <label>📎 Notas</label>
-        <input type="text" id="notas" placeholder="Información adicional">
-        <button type="submit">💾 Guardar registro</button>
-    </form>
-
-    <div id="loading" class="loading">⏳ Guardando...</div>
-    <div id="mensaje" class="msg"></div>
-    <div id="debugInfo" class="debug"></div>
-
-    <div id="resumen" class="resumen">
-        <h3>📊 Resumen rápido</h3>
-        <div class="resumen-item"><span>💚 Ingresos</span><span class="valor ingreso" id="totalIngresos">0</span></div>
-        <div class="resumen-item"><span>❤️ Gastos</span><span class="valor gasto" id="totalGastos">0</span></div>
-        <div class="resumen-item"><span>⚖️ Balance</span><span class="valor balance" id="balance">0</span></div>
+    <!-- OLAS -->
+    <div class="wave">
+        <svg viewBox="0 0 1200 200" preserveAspectRatio="none">
+            <path d="M0,100 C300,0 600,200 900,50 C1000,20 1100,80 1200,100 L1200,200 L0,200 Z" fill="#1a73e8"/>
+        </svg>
+        <svg viewBox="0 0 1200 200" preserveAspectRatio="none">
+            <path d="M0,100 C200,150 500,20 800,120 C950,170 1050,100 1200,120 L1200,200 L0,200 Z" fill="#0d47a1"/>
+        </svg>
+        <svg viewBox="0 0 1200 200" preserveAspectRatio="none">
+            <path d="M0,80 C400,160 700,20 1000,100 C1100,130 1150,90 1200,90 L1200,200 L0,200 Z" fill="#1a3a5c"/>
+        </svg>
     </div>
 
-    <div class="footer">
-        <a id="btnDescargar">📥 Descargar Excel</a>
-        <a id="btnActualizar">🔄 Actualizar resumen</a>
+    <div class="container">
+        <div class="header">
+            <h1>💰 Agente <span class="badge">v2.0</span></h1>
+        </div>
+        <p class="subtitle">📋 Registra tus ingresos y gastos</p>
+
+        <div class="form-wrapper">
+            <!-- 🔥 TU FORMULARIO DE GOOGLE YA INCLUIDO -->
+            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLScfbvZweVr6PZMAHFE8i8W0Fz9xM3tDdq05EEglruwMA-0qdg/viewform?embedded=true"></iframe>
+        </div>
+
+        <div class="footer">
+            <a href="#" id="btnDescargar">📥 Descargar Excel</a>
+        </div>
     </div>
-</div>
 
-<script>
-    // ============================================================
-    // ⚙️ CONFIGURACIÓN - TUS DATOS
-    // ============================================================
-    const URL_AGENTE = "https://script.google.com/macros/s/AKfycbzaA32TwrzcU7V7JU3gvBGReQvRTWNRV7Gjd5MVxXr0hIqMij8d06yZtDhZRlXQBcCGMQ/exec";
-    const ID_PLANILLA = "1z3iv1BUcrKKCsoE8eo2iF5zz3KZkkuXvQXHNlWg2cSA";
-    
-    // 🔥 PROXY ESTABLE
-    const PROXY_URL = "https://corsproxy.io/?";
+    <script>
+        // ============================================================
+        // ID DE TU PLANILLA (la que ya tienes)
+        // ============================================================
+        const ID_PLANILLA = "1z3iv1BUcrKKCsoE8eo2iF5zz3KZkkuXvQXHNlWg2cSA";
 
-    // ============================================================
-    // CÓDIGO PRINCIPAL
-    // ============================================================
-    const form = document.getElementById('formRegistro');
-    const mensaje = document.getElementById('mensaje');
-    const debugInfo = document.getElementById('debugInfo');
-    const resumenDiv = document.getElementById('resumen');
-    const loading = document.getElementById('loading');
-    const montoInput = document.getElementById('monto');
-
-    // ========== FORMATO DE MILES MEJORADO (100% FUNCIONAL) ==========
-    function formatoMiles(valor) {
-        // Eliminar todo lo que no sea número o punto decimal
-        let numeros = valor.replace(/[^0-9.]/g, '');
-        if (!numeros) return '';
-
-        // Dividir en parte entera y decimal
-        let partes = numeros.split('.');
-        let entero = partes[0];
-        let decimal = partes[1] || '';
-
-        // Si el número es menor a 1000, devolver sin cambios
-        if (entero.length <= 3) {
-            return decimal ? entero + '.' + decimal : entero;
-        }
-
-        // Formatear la parte entera con puntos de miles
-        let enteroFormateado = '';
-        let contador = 0;
-        // Recorremos el número de derecha a izquierda
-        for (let i = entero.length - 1; i >= 0; i--) {
-            enteroFormateado = entero[i] + enteroFormateado;
-            contador++;
-            // Cada 3 dígitos agregamos un punto (excepto al final)
-            if (contador % 3 === 0 && i !== 0) {
-                enteroFormateado = '.' + enteroFormateado;
-            }
-        }
-
-        // Devolver con decimal si existe
-        return decimal ? enteroFormateado + '.' + decimal : enteroFormateado;
-    }
-
-    // Aplicar formato mientras escribe
-    montoInput.addEventListener('input', function(e) {
-        // Guardar posición del cursor
-        let cursorPos = this.selectionStart;
-        let valorAnterior = this.value;
-        
-        // Aplicar formato
-        let valorFormateado = formatoMiles(this.value);
-        
-        // Si cambió, actualizar y ajustar cursor
-        if (valorFormateado !== this.value) {
-            this.value = valorFormateado;
-            // Ajustar posición del cursor
-            let diff = this.value.length - valorAnterior.length;
-            this.setSelectionRange(cursorPos + diff, cursorPos + diff);
-        }
-    });
-
-    // ========== LIMPIAR MONTO PARA ENVIAR ==========
-    function limpiarMonto(valor) {
-        // Eliminar todos los puntos (separadores de miles)
-        return valor.replace(/\./g, '');
-    }
-
-    function mostrarMensaje(texto, tipo) {
-        mensaje.className = 'msg ' + tipo;
-        mensaje.style.display = 'block';
-        mensaje.textContent = texto;
-    }
-
-    function mostrarDebug(texto) {
-        debugInfo.style.display = 'block';
-        debugInfo.textContent = texto;
-    }
-
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        mensaje.className = 'msg';
-        mensaje.style.display = 'none';
-        debugInfo.style.display = 'none';
-        loading.style.display = 'block';
-
-        const montoRaw = document.getElementById('monto').value;
-        const montoLimpio = limpiarMonto(montoRaw);
-
-        const data = {
-            fecha: document.getElementById('fecha').value,
-            tipo: document.getElementById('tipo').value,
-            categoria: document.getElementById('categoria').value,
-            descripcion: document.getElementById('descripcion').value,
-            monto: montoLimpio,
-            moneda: document.getElementById('moneda').value,
-            notas: document.getElementById('notas').value
-        };
-
-        mostrarDebug('📤 Enviando: ' + JSON.stringify(data));
-
-        try {
-            const params = new URLSearchParams(data);
-            const urlConDatos = URL_AGENTE + '?' + params.toString();
-            const urlProxy = PROXY_URL + encodeURIComponent(urlConDatos);
-
-            mostrarDebug('🌐 Enviando a través del proxy...');
-
-            const response = await fetch(urlProxy, { method: 'GET' });
-            const result = await response.text();
-
-            let cleanResult = result.trim();
-            const jsonStart = cleanResult.indexOf('{');
-            const jsonEnd = cleanResult.lastIndexOf('}') + 1;
-            if (jsonStart !== -1 && jsonEnd > jsonStart) {
-                cleanResult = cleanResult.substring(jsonStart, jsonEnd);
-            }
-
-            mostrarDebug('📥 Respuesta: ' + cleanResult);
-
-            try {
-                const json = JSON.parse(cleanResult);
-                if (json.status === 'success' || json.totalIngresos !== undefined) {
-                    mostrarMensaje('✅ ¡Registro guardado con éxito!', 'success');
-                    document.getElementById('descripcion').value = '';
-                    document.getElementById('monto').value = '';
-                    document.getElementById('notas').value = '';
-                    cargarResumen();
-                } else if (json.status === 'error') {
-                    mostrarMensaje('❌ Error: ' + json.message, 'error');
-                } else {
-                    mostrarMensaje('⚠️ Respuesta inesperada.', 'error');
-                    mostrarDebug('📄 Respuesta cruda: ' + result.substring(0, 200));
-                }
-            } catch (parseError) {
-                if (cleanResult.includes('totalIngresos') || cleanResult.includes('status') || cleanResult.includes('success')) {
-                    mostrarMensaje('✅ ¡Registro guardado con éxito!', 'success');
-                    document.getElementById('descripcion').value = '';
-                    document.getElementById('monto').value = '';
-                    document.getElementById('notas').value = '';
-                    cargarResumen();
-                } else {
-                    mostrarMensaje('⚠️ Respuesta inesperada.', 'error');
-                    mostrarDebug('📄 Respuesta cruda: ' + result.substring(0, 200));
-                }
-            }
-
-        } catch (error) {
-            mostrarMensaje('❌ Error de conexión: ' + error.message, 'error');
-            mostrarDebug('⚠️ Error: ' + error.toString());
-        }
-
-        loading.style.display = 'none';
-    });
-
-    async function cargarResumen() {
-        try {
-            const urlProxy = PROXY_URL + encodeURIComponent(URL_AGENTE);
-            const response = await fetch(urlProxy);
-            let result = await response.text();
-
-            let cleanResult = result.trim();
-            const jsonStart = cleanResult.indexOf('{');
-            const jsonEnd = cleanResult.lastIndexOf('}') + 1;
-            if (jsonStart !== -1 && jsonEnd > jsonStart) {
-                cleanResult = cleanResult.substring(jsonStart, jsonEnd);
-            }
-
-            const data = JSON.parse(cleanResult);
-            if (data.totalIngresos !== undefined) {
-                resumenDiv.style.display = 'block';
-                document.getElementById('totalIngresos').textContent = data.totalIngresos.toLocaleString() + ' ₲';
-                document.getElementById('totalGastos').textContent = data.totalGastos.toLocaleString() + ' ₲';
-                document.getElementById('balance').textContent = data.balance.toLocaleString() + ' ₲';
-            }
-        } catch (error) {
-            console.log('Resumen no disponible:', error);
-        }
-    }
-
-    document.getElementById('btnDescargar').addEventListener('click', (e) => {
-        e.preventDefault();
-        window.open('https://docs.google.com/spreadsheets/d/' + ID_PLANILLA + '/edit', '_blank');
-    });
-
-    document.getElementById('btnActualizar').addEventListener('click', (e) => {
-        e.preventDefault();
-        cargarResumen();
-    });
-
-    document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
-    cargarResumen();
-</script>
+        document.getElementById('btnDescargar').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.open('https://docs.google.com/spreadsheets/d/' + ID_PLANILLA + '/edit', '_blank');
+        });
+    </script>
 </body>
 </html>
