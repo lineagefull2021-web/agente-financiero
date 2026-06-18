@@ -22,7 +22,6 @@
             position: relative;
             overflow: hidden;
         }
-        /* EFECTO DE OLAS (como el agente anterior) */
         .wave {
             position: fixed;
             bottom: 0;
@@ -134,7 +133,6 @@
     </style>
 </head>
 <body>
-    <!-- OLAS -->
     <div class="wave">
         <svg viewBox="0 0 1200 200" preserveAspectRatio="none">
             <path d="M0,100 C300,0 600,200 900,50 C1000,20 1100,80 1200,100 L1200,200 L0,200 Z" fill="#1a73e8"/>
@@ -154,7 +152,7 @@
         <p class="subtitle">📋 Registra tus ingresos y gastos</p>
 
         <div class="form-wrapper">
-            <!-- 🔥 TU FORMULARIO DE GOOGLE YA INCLUIDO -->
+            <!-- 🔥 FORMULARIO DE GOOGLE (el que creaste) -->
             <iframe src="https://docs.google.com/forms/d/e/1FAIpQLScfbvZweVr6PZMAHFE8i8W0Fz9xM3tDdq05EEglruwMA-0qdg/viewform?embedded=true"></iframe>
         </div>
 
@@ -164,9 +162,6 @@
     </div>
 
     <script>
-        // ============================================================
-        // ID DE TU PLANILLA (la que ya tienes)
-        // ============================================================
         const ID_PLANILLA = "1z3iv1BUcrKKCsoE8eo2iF5zz3KZkkuXvQXHNlWg2cSA";
 
         document.getElementById('btnDescargar').addEventListener('click', function(e) {
